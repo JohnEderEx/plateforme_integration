@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./docker
+    container_name: integration_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  db:
+    image: postgres:14
+    container_name: integration_db
+    environment:
+      POSTGRES_DB: integration_db
+      POSTGRES_USER: integration_user
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+
+networks:
+  app_network:
+    driver: bridge
